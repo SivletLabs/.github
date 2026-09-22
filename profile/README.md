@@ -1,5 +1,9 @@
 <div align="center">
 
+<a href="https://sivletlabs.github.io">
+  <img src="https://sivletlabs.github.io/assets/logo.png" width="96" height="96" alt="SivletLabs" style="border-radius: 50%;">
+</a>
+
 # ⚡ SivletLabs
 ### System-1 Decision Models & Evaluation Infrastructure for Autonomous Agents
 
