@@ -59,9 +59,10 @@ Most autonomous AI agents suffer from the **"Autoregressive Trap"**: using 70B+ 
 
 | Repository / Module | Description | Status |
 | :--- | :--- | :---: |
+| [**contracts**](https://github.com/SivletLabs/contracts) | Production smart contracts: `BuybackBurnEngine.sol`, Clanker launch integration, and Uniswap v3 multi-hop buyback router. | **Audited & Tested** |
+| [**x402-gateway**](https://github.com/SivletLabs/x402-gateway) | Edge-native HTTP 402 multi-channel failover gateway with dual-currency (USDC + $SIVLET) settlement. | **Live on Edge** |
 | [**jev-eval**](https://github.com/SivletLabs/jev-eval) | Gymnasium-compatible RL simulation, GAE buffer engine, and evaluation benchmark for discrete System-1 policies. | **v0.2.0 Active** |
-| [**Sivlet-Jev Engine**](https://github.com/SivletLabs/jev-local) | Non-autoregressive forward scoring with KV-cache truncation (`trim_prompt_cache`), providing **24.3×** speedup. | **Active** |
-| [**x402 Protocol Service**](https://sivletlabs.github.io#x402) | Machine-native HTTP 402 pay-per-call API using EIP-3009 offline zero-gas authorization on Base L2. | **Live Spec** |
+| [**jev-local**](https://github.com/SivletLabs/jev-local) | Apple Silicon MLX local inference engine with KV-cache truncation (`trim_prompt_cache`), providing **24.3×** speedup. | **Active** |
 | [**sivletlabs.github.io**](https://sivletlabs.github.io) | Official portal, interactive simulation sandbox, live telemetry, and technical litepaper. | **Live** |
 
 ---
@@ -80,29 +81,43 @@ Evaluated under sequential MDP $\mathcal{M} = \langle \mathcal{S}, \mathcal{A}, 
 
 ---
 
-## 🔄 Closed-Loop Protocol Economics
+## 🔄 Closed-Loop Protocol Economics & Fair Token Launch
 
 ```
-[Agent Invocation] ──> [x402 USDC Micropayment] ──> [Protocol Treasury]
-                                                             │
-                                                     (Automated Keeper)
-                                                             │
-                                                             ▼
-[0x0...dEaD Burn Address] <── [100% Uniswap v3 TWAP Buyback $SIVLET]
+           [ Agent / Developer Client ]
+                         │
+              ┌──────────┴──────────┐
+              │  Pay with $SIVLET   │  Pay with USDC
+              │  (20% Discount)     │  (Standard Fee)
+              ▼                     ▼
+        [ 0x...dEaD ]         [ Protocol Treasury ]
+        (Direct Burn Sink)    (BuybackBurnEngine.sol)
+                                    │
+                       ┌────────────┴────────────┐
+                       │ Uniswap v3 Multi-Hop    │
+                       │ USDC ─[0.05%]─► WETH    │
+                       │   │                     │
+                       │   └─[1.00%]──► $SIVLET  │
+                       ▼                         │
+                 [ 0x...dEaD ] ◄─────────────────┘
+              (Permanent Burn Sink)
 ```
 
-1. **Machine-Native Micropayments**: Agents pay $0.0005–$0.001 USDC per decision via RFC 7231 HTTP 402 with zero API key friction.
-2. **Autonomous TWAP Buyback**: 100% of net protocol revenue in USDC triggers automated Uniswap v3 TWAP market purchases.
-3. **Provable Deflationary Burn**: All repurchased `$SIVLET` tokens are sent directly to `0x000000000000000000000000000000000000dEaD`.
+1. **Clanker Fair Launch on Base**: Fixed 1B supply launched fairly via `@clanker` on Warpcast / Base L2 with Uniswap v3 WETH pool.
+2. **Dual-Currency x402 Micropayments**: Agents pay in **USDC** (standard) or native **$SIVLET** (20% utility discount, burned directly on use).
+3. **Autonomous Multi-Hop Buyback**: 100% of USDC net protocol revenue in the Treasury triggers atomic Uniswap v3 swaps (`USDC -> WETH -> $SIVLET`) straight to `0x...dEaD`.
+4. **Decentralized Keeper Incentive**: Anyone calling `executeBuybackAndBurn()` is rewarded with **0.5% (50 bps)** of the transaction in USDC to cover gas.
 
 ---
 
 ## 🔗 Quick Links & Resources
 
 - 🌐 **Official Website**: [https://sivletlabs.github.io](https://sivletlabs.github.io)
+- 🏛️ **Smart Contracts**: [SivletLabs/contracts](https://github.com/SivletLabs/contracts)
+- ⚡ **x402 Gateway**: [SivletLabs/x402-gateway](https://github.com/SivletLabs/x402-gateway)
 - 📄 **Technical Litepaper**: [Read Litepaper](https://sivletlabs.github.io#litepaper)
 - 📊 **RL Benchmark Repo**: [SivletLabs/jev-eval](https://github.com/SivletLabs/jev-eval)
-- 🛠️ **x402 Service Documentation**: [x402 Integration Spec](https://sivletlabs.github.io#x402)
+- 🚀 **Clanker Launch**: [clanker.world/deploy](https://clanker.world/deploy)
 - 💬 **Farcaster & X**: [@SivletLabs](https://x.com/SivletLabs)
 
 ---
